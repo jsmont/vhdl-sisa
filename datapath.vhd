@@ -6,6 +6,7 @@ ENTITY datapath IS
     PORT (clk      : IN  STD_LOGIC;
           op       : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
           f        : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
+          br_cd    : IN STD_LOGIC_VECTOR(2 downto 0);
           wrd      : IN  STD_LOGIC;
           addr_a   : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
           addr_b   : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -15,9 +16,11 @@ ENTITY datapath IS
           datard_m : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
           ins_dad  : IN  STD_LOGIC;
           pc       : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-          in_d     : IN  STD_LOGIC;
+          in_d     : IN  STD_LOGIC_VECTOR(1 downto 0);
           rb_n     : IN  STD_LOGIC;
           addr_m   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          aluout   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          tk_br    : OUT  STD_LOGIC_VECTOR(1 downto 0);
           data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 END datapath;
 
@@ -29,6 +32,7 @@ component alu IS
           y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
           op : IN  STD_LOGIC_VECTOR(2 downto 0);
           f  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
+          z  : OUT STD_LOGIC;
           w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 END component;
 
@@ -51,6 +55,7 @@ signal b : STD_LOGIC_VECTOR(15 downto 0);
 signal x : STD_LOGIC_VECTOR(15 downto 0);
 signal w : STD_LOGIC_VECTOR(15 downto 0);
 signal y : std_logic_vector(15 downto 0);
+signal z : std_logic;
 signal f_immed: std_logic_vector(15 downto 0);
 
 BEGIN
@@ -73,6 +78,7 @@ Alu1 :	alu
 		y			=> y,
 		op			=>	op,
         f           => f,
+        z           => z,
 		w			=> w
 	);
 
@@ -102,9 +108,27 @@ Alu1 :	alu
     -- Manage d write
     with in_d select
     d <=
-        datard_m    when '1',
+        w           when "00",
+        datard_m    when "01",
+        std_logic_vector(to_unsigned(to_integer(unsigned( pc )) + 2, 16)) when "10", 
         w           when others;
 
+
+    -- Get aluout
+
+    aluout <= x;
+
+    -- Manage next pc
+    with br_cd select
+    tk_br <= 
+        "0"&z       when "010", -- Bz
+        "0"&not(z)  when "101", -- Bnz
+        "00"        when "110", -- No jump
+        z&"0"       when "000", -- Jz
+        not(z)&"0"  when "001", -- Jnz
+        "10"        when others;
+
+        
 
     -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
     -- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0

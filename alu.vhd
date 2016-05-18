@@ -9,6 +9,7 @@ ENTITY alu IS
           y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
           op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
           f  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
+          z  : OUT STD_LOGIC;
           w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 END alu;
 
@@ -49,9 +50,11 @@ BEGIN
         extra_op(31 downto 16)          when "010010", -- Mulhu
         extra_op(15 downto 0)           when "010100", -- Div
         extra_op(15 downto 0)           when "010101", -- Divu
-		(others => '0') when others;
+		x when others;
 
+    -- Z signal
 
+    z <= to_stdlogic(unsigned(y)=0);
 
     -- Remove divisions by 0 on transition states so simulation doesn't crash
 
