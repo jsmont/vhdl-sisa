@@ -5,7 +5,7 @@ LFLAGS=-a --ieee=synopsys
 OBJECTS=*.vhd
 GRAPHL=gtkwave
 ROOTF=test_sisa
-TIME=1000ns
+TIME=1500ns
 CINCLUDE=--vcd=$(ROOTF).vcd --stop-time=$(TIME)
 CLEAN =*.o *.cf *.vcd
 
