@@ -17,6 +17,7 @@ ARCHITECTURE Structure OF proc IS
         PORT (clk      : IN  STD_LOGIC;
               op       : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
               f        : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
+              br_cd    : IN STD_LOGIC_VECTOR(2 downto 0);
               wrd      : IN  STD_LOGIC;
               addr_a   : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
               addr_b   : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -26,9 +27,11 @@ ARCHITECTURE Structure OF proc IS
               datard_m : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
               ins_dad  : IN  STD_LOGIC;
               pc       : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-              in_d     : IN  STD_LOGIC;
+              in_d     : IN  STD_LOGIC_VECTOR(1 downto 0);
               rb_n     : IN  STD_LOGIC;
+              aluout   : OUT  STD_LOGIC_VECTOR(15 downto 0);
               addr_m   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              tk_br    : OUT  STD_LOGIC_VECTOR(1 downto 0);
               data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
     END component;
 
@@ -36,6 +39,8 @@ ARCHITECTURE Structure OF proc IS
         PORT (boot      : IN  STD_LOGIC;
               clk       : IN  STD_LOGIC;
               datard_m  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+              tk_br     : IN  STD_LOGIC_VECTOR(1 downto 0);
+              aluout    : IN  STD_LOGIC_VECTOR(15 downto 0);
               op        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
               f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
               wrd       : OUT STD_LOGIC;
@@ -45,10 +50,11 @@ ARCHITECTURE Structure OF proc IS
               immed     : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               pc        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               ins_dad   : OUT STD_LOGIC;
-              in_d      : OUT STD_LOGIC;
+              in_d      : OUT STD_LOGIC_VECTOR(1 downto 0);
               immed_x2  : OUT STD_LOGIC;
               rb_n      : OUT STD_LOGIC;
               wr_m      : OUT STD_LOGIC;
+              br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
               word_byte : OUT STD_LOGIC);
     END component;
 
@@ -63,7 +69,10 @@ ARCHITECTURE Structure OF proc IS
     signal ins_dad : std_logic;
     signal rb_n : std_logic;
     signal pc : std_logic_vector(15 downto 0);
-    signal in_d : std_logic;
+    signal in_d : std_logic_vector(1 downto 0);
+    signal aluout : STD_LOGIC_VECTOR(15 downto 0);
+    signal tk_br : STD_LOGIC_VECTOR(1 downto 0);
+    signal br_cd : STD_LOGIC_VECTOR(2 downto 0); 
 
 BEGIN
 
@@ -85,7 +94,10 @@ control: unidad_control
         immed_x2 => immed_x2,
         wr_m => wr_m,
         rb_n => rb_n,
-        word_byte => word_byte
+        word_byte => word_byte,
+        aluout => aluout,
+        tk_br => tk_br,
+        br_cd => br_cd
     );
 
 
@@ -106,7 +118,11 @@ datap: datapath
         rb_n => rb_n,
         in_d => in_d,
         addr_m => addr_m,
-        data_wr => data_wr
+        data_wr => data_wr,
+        aluout => aluout,
+        tk_br => tk_br,
+        br_cd => br_cd
+
     );
 
 -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes

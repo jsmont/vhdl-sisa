@@ -23,9 +23,10 @@ graph: test
 	$(GRAPHL) $(ROOTF).vcd
 
 setmem:
-	rm contingut.memoria.hexa16.rom
-	ln -s Test-Memoria-SimulacionChips/$(MEMFILE) ./contingut.memoria.hexa16.rom 
+	rm -f contingut.memoria.hexa16.rom package_*.vhd test_sisa.vhd async*.vhd
+	ln -s Test-Memoria-SimulacionChips/$(MEMFILE) ./contingut.memoria.hexa16.rom
+	ln -s Test-Memoria-SimulacionChips/*.vhd ./ 
 
 clean:
 	rm -f $(CLEAN) $(ROOTF)
-
+	rm -f contingut.memoria.hexa16.rom package_*.vhd test_sisa.vhd async*.vhd
