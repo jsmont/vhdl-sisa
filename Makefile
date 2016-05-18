@@ -8,8 +8,9 @@ ROOTF=test_sisa
 TIME=1500ns
 CINCLUDE=--vcd=$(ROOTF).vcd --stop-time=$(TIME)
 CLEAN =*.o *.cf *.vcd
+MEMFILE=contingut.memoria.hexa16.rom
 
-all: graph
+all: setmem graph
 
 test: precompile
 	$(CC) $(FFLAGS) $(ROOTF)
@@ -21,6 +22,10 @@ precompile:
 graph: test
 	$(GRAPHL) $(ROOTF).vcd
 
+setmem:
+	rm contingut.memoria.hexa16.rom
+	ln -s Test-Memoria-SimulacionChips/$(MEMFILE) ./contingut.memoria.hexa16.rom 
+
 clean:
-	rm -f $(CLEAN) $(ROOTF):x
+	rm -f $(CLEAN) $(ROOTF)
 
