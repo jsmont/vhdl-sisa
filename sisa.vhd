@@ -12,7 +12,16 @@ ENTITY sisa IS
           SRAM_CE_N : out   std_logic := '1';
           SRAM_OE_N : out   std_logic := '1';
           SRAM_WE_N : out   std_logic := '1';
-          SW        : in std_logic_vector(9 downto 9));
+          LEDR      : out   std_logic_vector(7 downto 0);
+          LEDG      : out   std_logic_vector(7 downto 0);
+          SW        : in    std_logic_vector(9 downto 0);
+          KEY       : in    std_logic_vector(3 downto 0);
+          HEX0      : out   std_logic_vector(6 downto 0);
+          HEX1      : out   std_logic_vector(6 downto 0);
+          HEX2      : out   std_logic_vector(6 downto 0);
+          HEX3      : out   std_logic_vector(6 downto 0)
+      );
+    
 END sisa;
 
 ARCHITECTURE Structure OF sisa IS
@@ -40,8 +49,33 @@ ARCHITECTURE Structure OF sisa IS
               addr_m    : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               data_wr   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               wr_m      : OUT STD_LOGIC;
-              word_byte : OUT STD_LOGIC);
+              word_byte : OUT STD_LOGIC;   
+              wr_io     : OUT std_logic_vector(15 downto 0);
+              rd_io     : IN std_logic_vector(15 downto 0);
+              addr_io   : OUT std_logic_vector(15 downto 0);
+              rd_in     : out std_logic;
+              wr_out    : out std_logic);
     END component;
+
+    component controladores_IO is
+        PORT (
+          boot : IN STD_LOGIC;
+          CLOCK_50 : in std_logic;
+          addr_io : in std_logic_vector(15 downto 0);
+          wr_io : in std_logic_vector(15 downto 0);
+          rd_io : out std_logic_vector(15 downto 0);
+          wr_out : in std_logic; 
+          rd_in : in std_logic;
+          led_verdes : out std_logic_vector(7 downto 0);
+          led_rojos : out std_logic_vector(7 downto 0);
+          key: in std_logic_vector(3 downto 0);
+          switch: in std_logic_vector(7 downto 0);
+          HEX0      : out   std_logic_vector(6 downto 0);
+          HEX1      : out   std_logic_vector(6 downto 0);
+          HEX2      : out   std_logic_vector(6 downto 0);
+          HEX3      : out   std_logic_vector(6 downto 0)
+        );
+    end component;
 
     signal clk_divider : std_logic_vector(2 downto 0):=(others=>'0');
     
@@ -51,6 +85,11 @@ ARCHITECTURE Structure OF sisa IS
     signal wr : std_logic;
     signal word_byte : std_logic;
 
+    signal addr_io : std_logic_vector(15 downto 0);
+    signal wr_io : std_logic_vector (15 downto 0);
+    signal rd_io : std_logic_vector (15 downto 0);
+    signal wr_out : std_logic;
+    signal rd_in : std_logic;
 BEGIN
 
     clk_divider <= 
@@ -81,6 +120,28 @@ processor : proc
         addr_m    => addr_m,
         data_wr   => data_wr,
         wr_m      => wr,
-        word_byte => word_byte);
-   
+        word_byte => word_byte,
+        addr_io => addr_io,
+        wr_io => wr_io,
+        rd_io => rd_io,
+        wr_out => wr_out,
+        rd_in => rd_in);
+IOcontroller: controladores_IO
+    port map(
+        boot => SW(9),
+        CLOCK_50 => CLOCK_50,
+        addr_io => addr_io,
+        wr_io => wr_io,
+        rd_io => rd_io,
+        wr_out => wr_out,
+        rd_in => rd_in,
+        led_verdes => LEDG,
+        led_rojos => LEDR,
+        key => KEY,
+        switch => SW(7 downto 0),
+        HEX0 => HEX0,
+        HEX1 => HEX1,
+        HEX2 => HEX2,
+        HEX3 => HEX3
+    );
 END Structure;
