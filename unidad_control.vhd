@@ -7,7 +7,8 @@ ENTITY unidad_control IS
     PORT (boot      : IN  STD_LOGIC;
           clk       : IN  STD_LOGIC;
           datard_m  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-          op        : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+          op        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+          f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
           wrd       : OUT STD_LOGIC;
           addr_a    : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
           addr_b    : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -18,6 +19,7 @@ ENTITY unidad_control IS
           in_d      : OUT STD_LOGIC;
           immed_x2  : OUT STD_LOGIC;
           wr_m      : OUT STD_LOGIC;
+          rb_n      : OUT STD_LOGIC;
           word_byte : OUT STD_LOGIC);
 END unidad_control;
 
@@ -26,7 +28,8 @@ ARCHITECTURE Structure OF unidad_control IS
 
     component control_l IS
         PORT (ir        : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-              op        : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+              op        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
               ldpc      : OUT STD_LOGIC;
               wrd       : OUT STD_LOGIC;
               addr_a    : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -36,6 +39,7 @@ ARCHITECTURE Structure OF unidad_control IS
               wr_m      : OUT STD_LOGIC;
               in_d      : OUT STD_LOGIC;
               immed_x2  : OUT STD_LOGIC;
+              rb_n      : OUT STD_LOGIC;
               word_byte : OUT STD_LOGIC);
     END component;
 
@@ -74,6 +78,7 @@ control_logic :  control_l
 	port map(
 		ir => ir,
 		op => op,
+        f => f,
 		ldpc => ldpc_1,
 		wrd => wrd_1,
 		addr_a => addr_a,
@@ -82,6 +87,7 @@ control_logic :  control_l
 		immed => immed,
         wr_m => wr_m_1,
         in_d => in_d,
+        rb_n => rb_n,
         immed_x2 => immed_x2,
         word_byte => w_b
 	);
