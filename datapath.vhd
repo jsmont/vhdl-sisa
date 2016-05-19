@@ -21,7 +21,11 @@ ENTITY datapath IS
           addr_m   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           aluout   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           tk_br    : OUT  STD_LOGIC_VECTOR(1 downto 0);
-          data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+          data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          wr_io    : OUT std_logic_vector(15 downto 0);
+          rd_io    : IN std_logic_vector(15 downto 0);
+          addr_io  : OUT std_logic_vector(15 downto 0) 
+    );
 END datapath;
 
 
@@ -111,7 +115,7 @@ Alu1 :	alu
         w           when "00",
         datard_m    when "01",
         std_logic_vector(to_unsigned(to_integer(unsigned( pc )) + 2, 16)) when "10", 
-        w           when others;
+        rd_io       when others;
 
 
     -- Get aluout
@@ -127,8 +131,13 @@ Alu1 :	alu
         z&"0"       when "000", -- Jz
         not(z)&"0"  when "001", -- Jnz
         "10"        when others;
+    
+    -- I/O Management
+    
+    addr_io <= immed;
 
-        
+    wr_io <= b;
+
 
     -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
     -- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0

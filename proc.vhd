@@ -8,7 +8,13 @@ ENTITY proc IS
           addr_m    : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           data_wr   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           wr_m      : OUT STD_LOGIC;
-          word_byte : OUT STD_LOGIC);
+          word_byte : OUT STD_LOGIC;   
+          wr_io     : OUT std_logic_vector(15 downto 0);
+          rd_io     : IN std_logic_vector(15 downto 0);
+          addr_io   : OUT std_logic_vector(15 downto 0);
+          rd_in     : out std_logic;
+          wr_out    : out std_logic
+    );
 END proc;
 
 ARCHITECTURE Structure OF proc IS
@@ -32,7 +38,10 @@ ARCHITECTURE Structure OF proc IS
               aluout   : OUT  STD_LOGIC_VECTOR(15 downto 0);
               addr_m   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               tk_br    : OUT  STD_LOGIC_VECTOR(1 downto 0);
-              data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+              data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              wr_io    : OUT std_logic_vector(15 downto 0);
+              rd_io    : IN std_logic_vector(15 downto 0);
+              addr_io  : OUT std_logic_vector(15 downto 0));
     END component;
 
     component unidad_control IS
@@ -55,7 +64,9 @@ ARCHITECTURE Structure OF proc IS
               rb_n      : OUT STD_LOGIC;
               wr_m      : OUT STD_LOGIC;
               br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
-              word_byte : OUT STD_LOGIC);
+              word_byte : OUT STD_LOGIC;
+              rd_in     : out std_logic;
+              wr_out    : out std_logic);
     END component;
 
     signal op : STD_LOGIC_VECTOR(2 downto 0);
@@ -97,7 +108,9 @@ control: unidad_control
         word_byte => word_byte,
         aluout => aluout,
         tk_br => tk_br,
-        br_cd => br_cd
+        br_cd => br_cd,
+        rd_in => rd_in,
+        wr_out => wr_out
     );
 
 
@@ -121,8 +134,10 @@ datap: datapath
         data_wr => data_wr,
         aluout => aluout,
         tk_br => tk_br,
-        br_cd => br_cd
-
+        br_cd => br_cd,
+        addr_io => addr_io,
+        wr_io => wr_io,
+        rd_io => rd_io
     );
 
 -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes

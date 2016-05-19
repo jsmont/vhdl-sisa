@@ -17,7 +17,9 @@ ENTITY control_l IS
           immed_x2  : OUT STD_LOGIC;
           word_byte : OUT STD_LOGIC;
           rb_n      : OUT STD_LOGIC;
-          br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0));
+          br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
+          rd_in     : out std_logic;
+          wr_out    : out std_logic);
 END control_l;
 
 
@@ -96,6 +98,7 @@ BEGIN
        ir(11 downto 9)      when "0100", -- Store
        ir(11 downto 9)      when "1110", -- Store byte
        ir(11 downto 9)      when "0110", -- Bz Bnz
+       ir(11 downto 9)      when "0111", -- In Out
        ir(11 downto 9)      when "1010", -- Other jumps
        ir(2 downto 0)       when "0000", -- Arithmetic
        ir(2 downto 0)       when "0001", -- Comparation
@@ -110,6 +113,7 @@ BEGIN
     with ir(15 downto 12) select
     immed <=
        std_logic_vector(resize(signed(ir(7 downto 0)), immed'length)) when "0101", -- Movi Movhi
+       std_logic_vector(resize(signed(ir(7 downto 0)), immed'length)) when "0111", -- In Out
        std_logic_vector(resize(signed(ir(7 downto 0)), immed'length)) when "0110", -- Bz Bnz
        std_logic_vector(resize(signed(ir(5 downto 0)), immed'length)) when "0011", -- Load
        std_logic_vector(resize(signed(ir(5 downto 0)), immed'length)) when "0100", -- Store
@@ -131,6 +135,7 @@ BEGIN
         "01" when "0011", -- Load
         "01" when "1101", -- Load byte
         "10" when "1010", -- Jal
+        "11" when "0111", -- In Out
         "00" when others; -- Others
     
     -- Setup immediate format
@@ -155,7 +160,17 @@ BEGIN
         ir(8)&not(ir(8))&ir(8) when "0110", -- Bz (010) Bnz (101)
         "110" when others; -- No jump
 
-    -- Aqui iria la generacion de las senales de control del datapath
+    -- Setup read I/O signal
+    with ir(15 downto 12) select
+    rd_in <=
+        not(ir(8))   when "0111", -- In Out
+        '0'     when others; -- Others
+
+    -- Setup write I/O signal
+    with ir(15 downto 12) select
+    wr_out <=
+        ir(8)   when "0111",
+        '0'     when others;
 
 
 
