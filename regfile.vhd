@@ -23,7 +23,7 @@ BEGIN
 	a <= mem( conv_integer(addr_a) );
 	b <= mem( conv_integer(addr_b) );
 
-    process(clk) is
+   process(clk, wrd) is
 	begin
 		if(rising_edge(clk) and wrd='1') then
 				mem(conv_integer(addr_d))<= d;
@@ -31,6 +31,6 @@ BEGIN
 	end process;
     -- Aqui iria la definicion del comportamiento del banco de registros
     -- Os puede ser util usar la funcion "conv_integer" o "to_integer"
-    -- Una buena (y limpia) implementacion no deberia ocupar más de 7 o 8 lineas
+    -- Una buena (y limpia) implementacion no deberia ocupar mï¿½s de 7 o 8 lineas
 
 END Structure;
