@@ -1,0 +1,4 @@
+
+Comprueba en un bucle de 50 iteraciones si se captura la excepcion 
+division por zero, para ello se muestra un contador en los 4 site segmentos
+con el numero de excepciones capturadas, si todo funciona correctamente se deberia mostrar 0x0032

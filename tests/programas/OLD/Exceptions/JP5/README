@@ -1,0 +1,4 @@
+Se ejecutan interrupciones hasta que switch 1 se activa, momento en el que se salta a una rutina que produce una excepcion division por cero pasando a ejecutar un halt. 
+
+Ademas en los visores se muestra el codigo de excepcion/interrupcion que se ha producido
+

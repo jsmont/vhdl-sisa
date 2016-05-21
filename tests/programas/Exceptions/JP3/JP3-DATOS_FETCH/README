@@ -1,0 +1,3 @@
+Se llama a se salta a la rutina bad_rutine + 1 por lo cual se intenta acceder a una instruccion mal alineada provocando una excepcion ademas el hex esta modificado para que ld y st accedan a direcciones impares
+
+
