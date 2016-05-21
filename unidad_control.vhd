@@ -24,7 +24,9 @@ ENTITY unidad_control IS
           wr_m      : OUT STD_LOGIC;
           rb_n      : OUT STD_LOGIC;
           word_byte : OUT STD_LOGIC;
-          br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0));
+          br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
+          rd_in     : out std_logic;
+          wr_out    : out std_logic);
 END unidad_control;
 
 
@@ -45,6 +47,8 @@ ARCHITECTURE Structure OF unidad_control IS
               immed_x2  : OUT STD_LOGIC;
               rb_n      : OUT STD_LOGIC;
               word_byte : OUT STD_LOGIC;
+              rd_in     : out std_logic;
+              wr_out    : out std_logic;
               br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0));
     END component;
 
@@ -98,7 +102,9 @@ control_logic :  control_l
         rb_n => rb_n,
         immed_x2 => immed_x2,
         word_byte => w_b,
-        br_cd => br_cd
+        br_cd => br_cd,
+        wr_out => wr_out,
+        rd_in => rd_in
 	);
 
 multi_cycle: multi
