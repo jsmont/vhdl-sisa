@@ -19,6 +19,7 @@ ARCHITECTURE Structure OF alu IS
     signal extra_op: std_logic_vector(31 downto 0);
 
     signal div_y: std_logic_vector(15 downto 0);
+	 signal sla_signal: std_logic_vector(15 downto 0);
 
     function to_stdlogic( V: Boolean ) return std_logic is 
     begin 
@@ -38,7 +39,7 @@ BEGIN
         not x                           when "000011", -- Not
         std_logic_vector(to_signed(to_integer(signed(x))+to_integer(signed(y)),16))     when "000100", -- Add
         std_logic_vector(to_signed(to_integer(signed(x))-to_integer(signed(y)),16))     when "000101", -- Sub
-        to_stdlogicvector(to_bitvector(x) sla to_integer(signed(y)))                    when "000110", -- SHA
+		  sla_signal 							when "000110", -- SHA
         std_logic_vector(unsigned(x) sll to_integer(signed(y)))                         when "000111", -- SHL
         "000000000000000"&to_stdlogic(signed(x) < signed(y))        when "001000", -- Cmplt         
         "000000000000000"&to_stdlogic(signed(x) <= signed(y))       when "001001", -- Cmple
@@ -53,8 +54,16 @@ BEGIN
 		x when others;
 
     -- Z signal
+	 
+	 
 
     z <= to_stdlogic(unsigned(y)=0);
+	 
+	 with y(15 downto 15) select
+	 sla_signal <=
+		to_stdlogicvector(to_bitvector(x) sla to_integer(signed(y))) when '0'
+		std_logic_vector(unsigned(x) sll to_integer(signed(y))) when others;
+		
 
     -- Remove divisions by 0 on transition states so simulation doesn't crash
 
