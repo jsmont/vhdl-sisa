@@ -61,7 +61,7 @@ BEGIN
 	 
 	 with y(15 downto 15) select
 	 sla_signal <=
-		to_stdlogicvector(to_bitvector(x) sla to_integer(signed(y))) when '0'
+		to_stdlogicvector(to_bitvector(x) sla to_integer(signed(y))) when "1",
 		std_logic_vector(unsigned(x) sll to_integer(signed(y))) when others;
 		
 
