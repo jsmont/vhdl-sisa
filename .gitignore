@@ -8,5 +8,6 @@
 !*.qpf
 !*.rom
 !*.hex
+!*.stp
 
 tests/.DS_Store
