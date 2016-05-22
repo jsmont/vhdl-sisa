@@ -82,6 +82,7 @@ BEGIN
         '0'     when "0100", -- Store
         '0'     when "1110", -- Store byte
         '0'     when "0110", -- Bz Bnz
+		  not(ir(8))	 when "0111", --In/Out
         to_stdlogic(ir(2 downto 0)="100") when "1010", -- Other jumps, all '0' but JAL
         '1'     when others; -- Else
 

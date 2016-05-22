@@ -20,7 +20,9 @@ ENTITY controladores_IO IS
       HEX2      : out   std_logic_vector(6 downto 0);
       HEX3      : out   std_logic_vector(6 downto 0);
 		ps2_clk    : inout STD_LOGIC;
-		ps2_data   : inout STD_LOGIC
+		ps2_data   : inout STD_LOGIC;
+      vga_cursor        : out std_logic_vector(15 downto 0);
+      vga_cursor_enable : out std_logic
     );
 END controladores_IO;
 
@@ -41,7 +43,8 @@ ARCHITECTURE Structure OF controladores_IO IS
 				 clear_char : in    STD_LOGIC;
 				 data_ready : out   STD_LOGIC);
 		end component;
-
+		
+		
     type MemoryStructure is Array (0 to 256) of std_logic_vector(15 downto 0);
 
     signal portRegisters : MemoryStructure := (others=>(others=>'0'));
@@ -118,6 +121,8 @@ driverHex3: driver7display
     led_rojos <= portRegisters(5)(7 downto 0);
     led_verdes <= portRegisters(6)(7 downto 0);
 
+	 vga_cursor <= portRegisters(11);
+	 vga_cursor_enable <= portRegisters(12)(0);
 
 
 END Structure;
