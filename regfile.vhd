@@ -15,9 +15,11 @@ ENTITY regfile IS
 END regfile;
 
 ARCHITECTURE Structure OF regfile IS
-	type register_array is array (0 to 7) of std_logic_vector(15 downto 0);
-	signal mem : register_array := ((others=>'0'),(others=>'0'),(others=>'0'),
-		(others=>'0'),(others=>'0'),(others=>'0'),(others=>'0'),(others=>'0'));
+			
+   type MemoryStructure is Array (0 to 7) of std_logic_vector(15 downto 0);
+
+   signal mem : MemoryStructure := (others=>(others=>'0'));
+	
 BEGIN
 	
 	a <= mem( conv_integer(addr_a) );
