@@ -1,0 +1,4 @@
+Esta modificado el archivo hex para que produzca un mal alineamiento y que en
+las instrucciones ld y sy en lugar de acceder a 0(r4) acceda a 1(r4)
+
+Por otro lado en el contador en este caso tendria que salir 0x64.

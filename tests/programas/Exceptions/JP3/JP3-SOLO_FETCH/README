@@ -1,0 +1,2 @@
+Se llama a se salta a la rutina bad_rutine + 1 por lo cual se intenta acceder a una instruccion mal alineada provocando una excepcion
+

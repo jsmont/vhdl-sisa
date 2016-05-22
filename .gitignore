@@ -1,4 +1,6 @@
 *
+
+*/.DS_Store
 !*/
 !*.vhd
 !*.vhdl
@@ -6,3 +8,5 @@
 !*.qpf
 !*.rom
 !*.hex
+
+tests/.DS_Store

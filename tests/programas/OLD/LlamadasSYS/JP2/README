@@ -1,0 +1,2 @@
+Prueba interrupciones y divisiones por zero, el profe dijo que este lo usaria, puede producir una interrupcion y que justo a continuacion salte la excepcion de division por cero, quedandose en bucle en la RSG.
+Si va bien los visores tienen que ir aumentando infinitamente.

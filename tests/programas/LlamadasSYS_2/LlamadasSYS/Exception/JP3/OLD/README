@@ -1,0 +1,5 @@
+FALTA COMPROBAR SI EL PROGRAMA ALINEA MAL LOS DATOS
+
+Nose como hacer que la direccion de memoria este mal alineada cuando es una instruccion, ya que el compilador da error y no compila, se podria probar a cargar un trozo de codigo en 0xC001 ?
+
+Por otro lado en el contador en este caso tendria que salir 0x64.
