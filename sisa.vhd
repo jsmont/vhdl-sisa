@@ -19,7 +19,9 @@ ENTITY sisa IS
           HEX0      : out   std_logic_vector(6 downto 0);
           HEX1      : out   std_logic_vector(6 downto 0);
           HEX2      : out   std_logic_vector(6 downto 0);
-          HEX3      : out   std_logic_vector(6 downto 0)
+          HEX3      : out   std_logic_vector(6 downto 0);
+			 PS2_CLK	  : inout std_LOGIC;
+			 PS2_DAT  : inout std_LOGIC
       );
     
 END sisa;
@@ -73,10 +75,12 @@ ARCHITECTURE Structure OF sisa IS
           HEX0      : out   std_logic_vector(6 downto 0);
           HEX1      : out   std_logic_vector(6 downto 0);
           HEX2      : out   std_logic_vector(6 downto 0);
-          HEX3      : out   std_logic_vector(6 downto 0)
+          HEX3      : out   std_logic_vector(6 downto 0);
+			 ps2_clk    : inout STD_LOGIC;
+			 ps2_data   : inout STD_LOGIC
         );
     end component;
-
+	 
     signal clk_divider : std_logic_vector(2 downto 0):=(others=>'0');
     
     signal datard_m : std_logic_vector(15 downto 0);
@@ -126,6 +130,8 @@ processor : proc
         rd_io => rd_io,
         wr_out => wr_out,
         rd_in => rd_in);
+		  
+		  
 IOcontroller: controladores_IO
     port map(
         boot => SW(9),
@@ -142,6 +148,8 @@ IOcontroller: controladores_IO
         HEX0 => HEX0,
         HEX1 => HEX1,
         HEX2 => HEX2,
-        HEX3 => HEX3
+        HEX3 => HEX3,
+		  ps2_clk => PS2_CLK,
+		  ps2_data => PS2_DAT
     );
 END Structure;

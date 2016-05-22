@@ -18,7 +18,9 @@ ENTITY controladores_IO IS
       HEX0      : out   std_logic_vector(6 downto 0);
       HEX1      : out   std_logic_vector(6 downto 0);
       HEX2      : out   std_logic_vector(6 downto 0);
-      HEX3      : out   std_logic_vector(6 downto 0)
+      HEX3      : out   std_logic_vector(6 downto 0);
+		ps2_clk    : inout STD_LOGIC;
+		ps2_data   : inout STD_LOGIC
     );
 END controladores_IO;
 
@@ -30,12 +32,37 @@ ARCHITECTURE Structure OF controladores_IO IS
 			    bitsCaracter	: out STD_LOGIC_VECTOR(6 DownTo 0));
     End component;
 
+	 component keyboard_controller is
+		Port (clk        : in    STD_LOGIC;
+				 reset      : in    STD_LOGIC;
+				 ps2_clk    : inout STD_LOGIC;
+				 ps2_data   : inout STD_LOGIC;
+				 read_char  : out   STD_LOGIC_VECTOR (7 downto 0);
+				 clear_char : in    STD_LOGIC;
+				 data_ready : out   STD_LOGIC);
+		end component;
 
     type MemoryStructure is Array (0 to 256) of std_logic_vector(15 downto 0);
 
     signal portRegisters : MemoryStructure := (others=>(others=>'0'));
     signal addres : integer := 0;
+	 
+	 signal clear_char : std_LOGIC := '0';
+	 signal data_ready : std_LOGIC := '0';
+	 signal read_char : std_logic_vector(7 downto 0):= (others=>'0');
+
 BEGIN
+
+keyboardDriver: keyboard_controller
+	port map(
+		clk => CLOCK_50,
+		reset => boot,
+		ps2_clk => ps2_clk,
+		ps2_data => ps2_data,
+		read_char => read_char,
+		clear_char => clear_char,
+		data_ready => data_ready
+	);
 
 driverHex0: driver7display
     port map(
@@ -69,11 +96,19 @@ driverHex3: driver7display
     process(CLOCK_50, wr_out,addres) is
     begin
         if(rising_edge(CLOCK_50)) then
-				if(wr_out='1' and addres /= 7 and addres /= 8) then
+		  
+				portRegisters(7)(3 downto 0) <= key;
+				portRegisters(8)(7 downto 0) <= switch;
+				
+				clear_char <= '0';
+				portRegisters(15)(7 downto 0) <= read_char;
+				portRegisters(16)(0) <= data_ready;
+				
+				if(wr_out='1' and addres /= 7 and addres /= 8 and addres /= 16) then
 					portRegisters(addres) <= wr_io;
-				else
-					portRegisters(7)(3 downto 0) <= key;
-					portRegisters(8)(7 downto 0) <= switch;
+				elsif(wr_out='1' and addres = 16) then
+					portRegisters(16) <= (others=>'0');
+					clear_char <= '1';
 				end if;
         end if;
     end process;
