@@ -19,7 +19,8 @@ ENTITY control_l IS
           rb_n      : OUT STD_LOGIC;
           br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
           rd_in     : out std_logic;
-          wr_out    : out std_logic);
+          wr_out    : out std_logic;
+			 a_sys	  : out std_logic_vector(2 downto 0));
 END control_l;
 
 
@@ -28,6 +29,13 @@ ARCHITECTURE Structure OF control_l IS
     begin 
         return std_logic'Val(Boolean'Pos(V)+2);
     end to_stdlogic;
+	 
+	 signal s_f : std_logic_VECTOR(2 downto 0);
+	 signal s_immed : std_LOGIC_VECTOR(7 downto 0);
+	 signal s_jmp : std_LOGIC_VECTOR(2 downto 0);
+	 signal s_addr_a: std_LOGIC_VECTOR(2 downto 0);
+	 signal s_addr_d: std_LOGIC_VECTOR(2 downto 0);
+	 signal s_mode: std_LOGIC_VECTOR(2 downto 0);
 BEGIN
 
     ldpc <= 
@@ -48,6 +56,7 @@ BEGIN
         "000"   when "1110", -- Store byte
         "000"   when "0110", -- Bz Bnz
         "000"   when "1010", -- Other jumps
+		  "000"   when "1111", -- S management
         "111"   when others;
 
     -- Setup function
@@ -61,8 +70,15 @@ BEGIN
         "100"       when "1110", -- Store byte
         "000"       when "0110", -- Bz Bnz
         "000"       when "1010", -- Other jumps
+		  s_f		  when "1111", -- RDS WRS RETI
         ir(5 downto 3) when others; -- Others
-
+	
+	with ir(4 downto 0) select
+	s_f <=
+		"001" when "00000",
+		"000" when "00001",
+		"100" when others;
+		  
     -- Setup y input source
 
     with ir(15 downto 12) select
@@ -73,6 +89,7 @@ BEGIN
         '1'     when "0100", -- Store
         '1'     when "1101", -- Load byte
         '1'     when "1110", -- Store byte
+		  '1'	    when "1111", -- S management
         '0'     when others; -- Others.
 
     -- Set up write permissions
@@ -90,8 +107,15 @@ BEGIN
     with ir(15 downto 12) select
     addr_a <=
         ir(11 downto 9)     when "0101", -- Movi Movhi
+		  s_addr_a				 when "1111", -- S instructions
         ir(8 downto 6)      when others; -- Non special ones
-    
+		  
+	 with ir(4 downto 0) select
+    s_addr_a <=
+			"111" when "00000",
+			"111" when "00001",
+			"001" when "00100",
+			ir(8 downto 6) when others;
 
     --Setup addr_b
     with ir(15 downto 12) select
@@ -108,8 +132,17 @@ BEGIN
 
 
     --Setup addr_d
-    addr_d <= ir(11 downto 9); -- No one uses a different one
+	 with ir(15 downto 12) select
+    addr_d <= 
+		s_addr_d when "1111",
+		ir(11 downto 9) when others; -- No one uses a different one
 
+	with ir(4 downto 0) select
+	s_addr_d <=
+		"111" when "00000",
+		"111" when "00001",
+		ir(11 downto 9) when others;
+		
     -- Setup immed
     with ir(15 downto 12) select
     immed <=
@@ -121,8 +154,15 @@ BEGIN
        std_logic_vector(resize(signed(ir(5 downto 0)), immed'length)) when "1101", -- Load byte
        std_logic_vector(resize(signed(ir(5 downto 0)), immed'length)) when "1110", -- Store byte
        std_logic_vector(resize(signed(ir(5 downto 0)), immed'length)) when "0010", -- Addi
-       (others=>'1') when others; -- Don't need immediate
+       std_logic_vector(resize(signed(s_immed), immed'length)) when "1111",
+		 (others=>'1') when others; -- Don't need immediate
     
+	 with ir(4 downto 0) select
+	 s_immed <=
+		"11111101" when "00001",
+		"00000010" when "00000",
+		"00000000" when others;
+	 
     -- Setup Write memory permissions
     with ir(15 downto 12) select
     wr_m <=
@@ -159,7 +199,14 @@ BEGIN
     br_cd <=
         ir(2 downto 0) when "1010", -- Other jumps
         ir(8)&not(ir(8))&ir(8) when "0110", -- Bz (010) Bnz (101)
-        "110" when others; -- No jump
+        s_jmp when "1111",
+		  "110" when others; -- No jump
+	
+	 with ir(4 downto 0) select
+	 s_jmp <=
+		"011" when "00100",
+		"110" when others;
+	 
 
     -- Setup read I/O signal
     with ir(15 downto 12) select
@@ -174,5 +221,18 @@ BEGIN
         '0'     when others;
 
 
+	with ir(15 downto 12) select
+	a_sys <=
+		s_mode when "1111",
+		"000" when others;
+		
+	with ir(4 downto 0) select
+	s_mode <=
+		"001" when "01100",
+		"010" when "10000",
+		"011" when "00100",
+		"110" when "00001",
+		"111" when "00000",
+		"000" when others;
 
 END Structure;
