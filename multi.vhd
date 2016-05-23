@@ -14,7 +14,9 @@ entity multi is
          ldir      : OUT STD_LOGIC;
          ins_dad   : OUT STD_LOGIC;
          word_byte : OUT STD_LOGIC;
-			 int_cycle: out std_LOGIC);
+			int_cycle: out std_LOGIC;
+			intr : in std_logic;
+			enable_int: in std_LOGIC);
 end entity;
 
 architecture Structure of multi is
@@ -42,14 +44,16 @@ begin
 
     next_state <=
         FETCH when boot='1'
-        else FETCH when state=DEMW
-        else DEMW;
+		  else SYS when state=DEMW and intr='1' and enable_int='1'
+        else DEMW when state=FETCH
+        else FETCH;
 
     -- Gesti�n de salidas
 
     with state select
     ldpc <=
         ldpc_1 when DEMW,
+		  ldpc_1 when SYS,
         '0' when others;
     
     with state select

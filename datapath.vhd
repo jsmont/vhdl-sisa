@@ -27,7 +27,8 @@ ENTITY datapath IS
           addr_io  : OUT std_logic_vector(15 downto 0);
 			 a_sys  : IN std_LOGIC_vector(2 downto 0);
 			 int_cycle: in std_LOGIC;
-			 pcup   : in std_LOGIC_VECTOR(15 downto 0) 
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0);
+			 enable_int: out std_LOGIC
     );
 END datapath;
 
@@ -54,7 +55,8 @@ component regfile IS
           b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			 a_sys  : IN std_LOGIC_vector(2 downto 0);
 			 int_cycle: in std_LOGIC;
-			 pcup   : in std_LOGIC_VECTOR(15 downto 0));
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0);
+			 enable_int: out std_LOGIC);
 END component;
     -- Aqui iria la declaracion de las entidades que vamos a usar
     -- Usaremos la palabra reservada COMPONENT ...
@@ -82,7 +84,8 @@ registers: regfile
         b =>  b,
 			 a_sys  => a_sys,
 			 int_cycle => int_cycle,
-			 pcup => pcup
+			 pcup => pcup,
+			 enable_int => enable_int
 	);
 
 Alu1 :	alu

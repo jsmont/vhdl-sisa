@@ -13,7 +13,8 @@ ENTITY proc IS
           rd_io     : IN std_logic_vector(15 downto 0);
           addr_io   : OUT std_logic_vector(15 downto 0);
           rd_in     : out std_logic;
-          wr_out    : out std_logic
+          wr_out    : out std_logic;
+			intr : in std_logic
     );
 END proc;
 
@@ -44,7 +45,8 @@ ARCHITECTURE Structure OF proc IS
               addr_io  : OUT std_logic_vector(15 downto 0);
 			 a_sys  : IN std_LOGIC_vector(2 downto 0);
 			 int_cycle: in std_LOGIC;
-			 pcup   : in std_LOGIC_VECTOR(15 downto 0));
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0);
+			 enable_int: out std_LOGIC);
     END component;
 
     component unidad_control IS
@@ -72,7 +74,10 @@ ARCHITECTURE Structure OF proc IS
               wr_out    : out std_logic;
 				  a_sys  : out std_LOGIC_vector(2 downto 0);
 				  int_cycle: out std_LOGIC;
-				  pcup   : out std_LOGIC_VECTOR(15 downto 0));
+				  pcup   : out std_LOGIC_VECTOR(15 downto 0);
+				  intr : in std_logic;
+				  enable_int: in std_LOGIC
+			);
     END component;
 
     signal op : STD_LOGIC_VECTOR(2 downto 0);
@@ -93,6 +98,7 @@ ARCHITECTURE Structure OF proc IS
 	 signal a_sys  : std_LOGIC_vector(2 downto 0);
 	 signal int_cycle: std_LOGIC;
 	 signal pcup   : std_LOGIC_VECTOR(15 downto 0);
+	 signal enable_int: std_LOGIC;
 BEGIN
 
 control: unidad_control
@@ -121,7 +127,9 @@ control: unidad_control
         wr_out => wr_out,
 		  a_sys => a_sys,
 		  int_cycle => int_cycle,
-		  pcup => pcup
+		  pcup => pcup,
+		  enable_int => enable_int,
+		  intr => intr
     );
 
 
@@ -151,7 +159,8 @@ datap: datapath
         rd_io => rd_io,
 		  a_sys => a_sys,
 		  int_cycle => int_cycle,
-		  pcup => pcup
+		  pcup => pcup,
+		  enable_int => enable_int
     );
 
 -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes

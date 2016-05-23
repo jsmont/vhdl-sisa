@@ -14,7 +14,8 @@ ENTITY regfile IS
           b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			 a_sys  : IN std_LOGIC_vector(2 downto 0);
 			 int_cycle: in std_LOGIC;
-			 pcup   : in std_LOGIC_VECTOR(15 downto 0));
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0);
+			 enable_int: out std_LOGIC);
 END regfile;
 
 ARCHITECTURE Structure OF regfile IS
@@ -23,29 +24,35 @@ ARCHITECTURE Structure OF regfile IS
 
    signal mem : MemoryStructure := (others=>(others=>'0'));
    signal system_mem : MemoryStructure := (others=>(others=>'0'));
-	signal int_pc : std_LOGIC_VECTOR(15 downto 0);
-	
+	signal int_a : std_LOGIC_VECTOR(15 downto 0);
 BEGIN
 	
 	with int_cycle select
-	int_pc <= 
-		system_mem(1) when '0',
-		system_mem(5) when others;
+	a <= 
+		system_mem(5) when '1',
+		int_a when others;
 	
 	with a_sys select
-	a <= 
+	int_a <= 
 		mem( conv_integer(addr_a) ) when "000",
 		mem( conv_integer(addr_a)) when "010",
-		int_pc when "011",
+		system_mem(1) when "011",
 		system_mem(conv_integer(addr_a)) when others;
 		
 	b <= mem( conv_integer(addr_b) );
+	
+	enable_int <= system_mem(7)(1);
 
    process(clk, wrd) is
 	begin
-		if(rising_edge(clk) and wrd='1' and a_sys(1)='0') then
+		if (rising_edge(clk) and int_cycle='1') then
+			system_mem(0) <= system_mem(7);
+			system_mem(1) <= pcup;
+			system_mem(2) <= "0000000000001111";
+			system_mem(7)(1) <= '0';
+		elsif(rising_edge(clk) and wrd='1' and a_sys(1)='0' and int_cycle='0') then
 				mem(conv_integer(addr_d))<= d;
-		elsif (rising_edge(clk) and wrd='1' and a_sys(1)='1') then
+		elsif (rising_edge(clk) and wrd='1' and a_sys(1)='1' and int_cycle='0') then
 				if(a_sys = "011") then
 					system_mem(7) <= system_mem(0);
 				else 
