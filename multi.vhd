@@ -13,22 +13,28 @@ entity multi is
          wr_m      : OUT STD_LOGIC;
          ldir      : OUT STD_LOGIC;
          ins_dad   : OUT STD_LOGIC;
-         word_byte : OUT STD_LOGIC);
+         word_byte : OUT STD_LOGIC;
+			 int_cycle: out std_LOGIC);
 end entity;
 
 architecture Structure of multi is
 
     -- Aqui iria la declaracion de las los estados de la maquina de estados
 
-    type cycle_status is (FETCH, DEMW);
+    type cycle_status is (FETCH, DEMW, SYS);
 
     signal state : cycle_status;
     signal next_state : cycle_status;
 
 begin
 
-    -- Gestión de estados
+    -- Gestiï¿½n de estados
 
+	 with state select
+	 int_cycle <=
+		'1' when SYS,
+		'0' when others;
+	 
     state <=
         next_state when rising_edge(clk)
         else state;
@@ -39,7 +45,7 @@ begin
         else FETCH when state=DEMW
         else DEMW;
 
-    -- Gestión de salidas
+    -- Gestiï¿½n de salidas
 
     with state select
     ldpc <=

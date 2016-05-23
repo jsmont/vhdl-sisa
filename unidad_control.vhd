@@ -26,7 +26,10 @@ ENTITY unidad_control IS
           word_byte : OUT STD_LOGIC;
           br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
           rd_in     : out std_logic;
-          wr_out    : out std_logic);
+          wr_out    : out std_logic;
+			 a_sys  : out std_LOGIC_vector(2 downto 0);
+			 int_cycle: out std_LOGIC;
+			 pcup   : out std_LOGIC_VECTOR(15 downto 0));
 END unidad_control;
 
 
@@ -49,7 +52,9 @@ ARCHITECTURE Structure OF unidad_control IS
               word_byte : OUT STD_LOGIC;
               rd_in     : out std_logic;
               wr_out    : out std_logic;
-              br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0));
+              br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
+				  a_sys		: out std_LOGIC_vector(2 downto 0)
+				  );
     END component;
 
     component multi is
@@ -64,7 +69,8 @@ ARCHITECTURE Structure OF unidad_control IS
              wr_m      : OUT STD_LOGIC;
              ldir      : OUT STD_LOGIC;
              ins_dad   : OUT STD_LOGIC;
-             word_byte : OUT STD_LOGIC);
+             word_byte : OUT STD_LOGIC;
+				 int_cycle: out std_LOGIC);
     end component;
     -- Aqui iria la declaracion de las entidades que vamos a usar
     -- Tambien crearemos los cables/buses (signals) necesarios para unir las entidades
@@ -104,7 +110,8 @@ control_logic :  control_l
         word_byte => w_b,
         br_cd => br_cd,
         wr_out => wr_out,
-        rd_in => rd_in
+        rd_in => rd_in,
+		  a_sys => a_sys
 	);
 
 multi_cycle: multi
@@ -120,7 +127,8 @@ multi_cycle: multi
         wr_m => wr_m,
         ldir => ldir,
         ins_dad => ins_dad,
-        word_byte => word_byte
+        word_byte => word_byte,
+		  int_cycle => int_cycle
     );
 	
 	n_pc <=
@@ -141,6 +149,7 @@ multi_cycle: multi
 		n_pc when rising_edge(clk)
 		else new_pc;
 		
+	pcup <= n_pc;
 	pc <= new_pc;
 
     ir <=
