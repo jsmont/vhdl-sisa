@@ -36,6 +36,8 @@ ARCHITECTURE Structure OF control_l IS
 	 signal s_addr_a: std_LOGIC_VECTOR(2 downto 0);
 	 signal s_addr_d: std_LOGIC_VECTOR(2 downto 0);
 	 signal s_mode: std_LOGIC_VECTOR(2 downto 0);
+	 signal s_in_d : std_LOGIC_VECTOR(1 downto 0);
+	 signal s_rd_in : std_LOGIC;
 BEGIN
 
     ldpc <= 
@@ -177,8 +179,15 @@ BEGIN
         "01" when "1101", -- Load byte
         "10" when "1010", -- Jal
         "11" when "0111", -- In Out
+		  s_in_d when "1111",
         "00" when others; -- Others
     
+	 with ir(4 downto 0) select
+	 s_in_d <=
+		  "11" when "01000",
+		  "00" when others;
+		
+	 
     -- Setup immediate format
     with ir(15 downto 12) select
     immed_x2 <=
@@ -212,8 +221,14 @@ BEGIN
     with ir(15 downto 12) select
     rd_in <=
         not(ir(8))   when "0111", -- In Out
+		  s_rd_in		when "1111",
         '0'     when others; -- Others
 
+	 with ir(4 downto 0) select
+	 s_rd_in <=
+		'1' when "00100",
+		'0' when others;
+		
     -- Setup write I/O signal
     with ir(15 downto 12) select
     wr_out <=
