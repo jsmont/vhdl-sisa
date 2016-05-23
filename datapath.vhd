@@ -24,7 +24,10 @@ ENTITY datapath IS
           data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           wr_io    : OUT std_logic_vector(15 downto 0);
           rd_io    : IN std_logic_vector(15 downto 0);
-          addr_io  : OUT std_logic_vector(15 downto 0) 
+          addr_io  : OUT std_logic_vector(15 downto 0);
+			 a_sys  : IN std_LOGIC_vector(2 downto 0);
+			 int_cycle: in std_LOGIC;
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0) 
     );
 END datapath;
 
@@ -48,7 +51,10 @@ component regfile IS
           addr_b : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
           addr_d : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
           a      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+          b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+			 a_sys  : IN std_LOGIC_vector(2 downto 0);
+			 int_cycle: in std_LOGIC;
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0));
 END component;
     -- Aqui iria la declaracion de las entidades que vamos a usar
     -- Usaremos la palabra reservada COMPONENT ...
@@ -72,8 +78,11 @@ registers: regfile
 		addr_a	=>  addr_a,
         addr_b  =>  addr_b,
 		addr_d	=>  addr_d,
-		a		=>	x,
-        b       =>  b
+			a =>	x,
+        b =>  b,
+			 a_sys  => a_sys,
+			 int_cycle => int_cycle,
+			 pcup => pcup
 	);
 
 Alu1 :	alu

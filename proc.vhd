@@ -41,7 +41,10 @@ ARCHITECTURE Structure OF proc IS
               data_wr  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               wr_io    : OUT std_logic_vector(15 downto 0);
               rd_io    : IN std_logic_vector(15 downto 0);
-              addr_io  : OUT std_logic_vector(15 downto 0));
+              addr_io  : OUT std_logic_vector(15 downto 0);
+			 a_sys  : IN std_LOGIC_vector(2 downto 0);
+			 int_cycle: in std_LOGIC;
+			 pcup   : in std_LOGIC_VECTOR(15 downto 0));
     END component;
 
     component unidad_control IS
@@ -66,7 +69,10 @@ ARCHITECTURE Structure OF proc IS
               br_cd     : OUT STD_LOGIC_VECTOR(2 downto 0);
               word_byte : OUT STD_LOGIC;
               rd_in     : out std_logic;
-              wr_out    : out std_logic);
+              wr_out    : out std_logic;
+				  a_sys  : out std_LOGIC_vector(2 downto 0);
+				  int_cycle: out std_LOGIC;
+				  pcup   : out std_LOGIC_VECTOR(15 downto 0));
     END component;
 
     signal op : STD_LOGIC_VECTOR(2 downto 0);
@@ -84,7 +90,9 @@ ARCHITECTURE Structure OF proc IS
     signal aluout : STD_LOGIC_VECTOR(15 downto 0);
     signal tk_br : STD_LOGIC_VECTOR(1 downto 0);
     signal br_cd : STD_LOGIC_VECTOR(2 downto 0); 
-
+	 signal a_sys  : std_LOGIC_vector(2 downto 0);
+	 signal int_cycle: std_LOGIC;
+	 signal pcup   : std_LOGIC_VECTOR(15 downto 0);
 BEGIN
 
 control: unidad_control
@@ -110,7 +118,10 @@ control: unidad_control
         tk_br => tk_br,
         br_cd => br_cd,
         rd_in => rd_in,
-        wr_out => wr_out
+        wr_out => wr_out,
+		  a_sys => a_sys,
+		  int_cycle => int_cycle,
+		  pcup => pcup
     );
 
 
@@ -137,7 +148,10 @@ datap: datapath
         br_cd => br_cd,
         addr_io => addr_io,
         wr_io => wr_io,
-        rd_io => rd_io
+        rd_io => rd_io,
+		  a_sys => a_sys,
+		  int_cycle => int_cycle,
+		  pcup => pcup
     );
 
 -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
