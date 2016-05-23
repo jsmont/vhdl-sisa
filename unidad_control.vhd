@@ -29,7 +29,9 @@ ENTITY unidad_control IS
           wr_out    : out std_logic;
 			 a_sys  : out std_LOGIC_vector(2 downto 0);
 			 int_cycle: out std_LOGIC;
-			 pcup   : out std_LOGIC_VECTOR(15 downto 0));
+			 pcup   : out std_LOGIC_VECTOR(15 downto 0);
+			 intr : in std_logic;
+			 enable_int: in std_LOGIC);
 END unidad_control;
 
 
@@ -70,7 +72,9 @@ ARCHITECTURE Structure OF unidad_control IS
              ldir      : OUT STD_LOGIC;
              ins_dad   : OUT STD_LOGIC;
              word_byte : OUT STD_LOGIC;
-				 int_cycle: out std_LOGIC);
+				 int_cycle: out std_LOGIC;
+				 intr : in std_logic;
+				  enable_int: in std_LOGIC);
     end component;
     -- Aqui iria la declaracion de las entidades que vamos a usar
     -- Tambien crearemos los cables/buses (signals) necesarios para unir las entidades
@@ -90,6 +94,8 @@ ARCHITECTURE Structure OF unidad_control IS
 
     signal ir : std_logic_vector(15 downto 0):=(others=>'0');
     signal n_ir : std_logic_vector(15 downto 0):=(others=>'0');
+	 signal int_tkbr: std_LOGIC_VECTOR(1 downto 0);
+	 signal internal_int_cycle: std_LOGIC;
 BEGIN
 
 control_logic :  control_l
@@ -128,7 +134,9 @@ multi_cycle: multi
         ldir => ldir,
         ins_dad => ins_dad,
         word_byte => word_byte,
-		  int_cycle => int_cycle
+		  int_cycle => internal_int_cycle,
+		  intr => intr,
+		  enable_int => enable_int
     );
 	
 	n_pc <=
@@ -136,7 +144,14 @@ multi_cycle: multi
 		else new_pc when ldpc='0'
 		else m_pc;
 
-    with tk_br select
+	int_cycle <= internal_int_cycle;
+		
+	with internal_int_cycle select
+	int_tkbr <=
+		"10" when '1',
+		tk_br when others;
+		
+    with int_tkbr select
     m_pc <=
         pc_2            when "00",
         aluout          when "10",
@@ -149,7 +164,9 @@ multi_cycle: multi
 		n_pc when rising_edge(clk)
 		else new_pc;
 		
-	pcup <= n_pc;
+	
+	pcup <= new_pc;
+
 	pc <= new_pc;
 
     ir <=

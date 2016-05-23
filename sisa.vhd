@@ -66,7 +66,8 @@ ARCHITECTURE Structure OF sisa IS
               rd_io     : IN std_logic_vector(15 downto 0);
               addr_io   : OUT std_logic_vector(15 downto 0);
               rd_in     : out std_logic;
-              wr_out    : out std_logic);
+              wr_out    : out std_logic;
+				  intr : in std_logic);
     END component;
 
     component controladores_IO is
@@ -89,7 +90,8 @@ ARCHITECTURE Structure OF sisa IS
 			 ps2_clk    : inout STD_LOGIC;
 			 ps2_data   : inout STD_LOGIC;
          vga_cursor        : out std_logic_vector(15 downto 0);
-         vga_cursor_enable : out std_logic
+         vga_cursor_enable : out std_logic;
+			intr : out std_logic
         );
     end component;
 	 
@@ -136,6 +138,7 @@ ARCHITECTURE Structure OF sisa IS
 	signal vga_byte_m : std_logic;
 	signal vga_cursor : std_logic_vector(15 downto 0);
    signal vga_cursor_enable : std_logic;
+	signal intr : std_LOGIC;
 	
 BEGIN
 
@@ -195,7 +198,8 @@ processor : proc
         wr_io => wr_io,
         rd_io => rd_io,
         wr_out => wr_out,
-        rd_in => rd_in);
+        rd_in => rd_in,
+		  intr => intr);
 		  
 		  
 IOcontroller: controladores_IO
@@ -218,6 +222,7 @@ IOcontroller: controladores_IO
 		  ps2_clk => PS2_CLK,
 		  ps2_data => PS2_DAT,
 		  vga_cursor => vga_cursor,
-		  vga_cursor_enable => vga_cursor_enable
+		  vga_cursor_enable => vga_cursor_enable,
+		  intr => intr
     );
 END Structure;
